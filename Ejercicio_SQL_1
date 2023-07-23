@@ -83,10 +83,15 @@ WHERE precio > 50;
 14. Consultar los pedidos de la tabla "Pedidos" que tengan una cantidad mayor o
 igual a 5.
 '''
+SELECT * FROM public.pedidos
+WHERE cantidad >= 5;
+
 '''
 15. Consultar los clientes de la tabla "Clientes" cuyo nombre empiece con la letra
 "A".
 '''
+SELECT * FROM public.clientes
+WHERE name LIKE  'A%';
 '''
 16. Realizar una consulta que muestre el nombre del cliente y el total de pedidos
 realizados por cada cliente.
@@ -94,14 +99,21 @@ realizados por cada cliente.
 SELECT name, COUNT(ventas.id) AS Num_pedidos
 FROM clientes JOIN ventas ON ventas.client_id = clientes.id
 GROUP BY name
+
 '''
 17. Realizar una consulta que muestre el nombre del producto y la cantidad total de
 pedidos de ese producto.
 '''
+SELECT name, SUM(pedidos.cantidad) AS Num_pedidos
+FROM productos JOIN pedidos ON productos.id = pedidos.product_id
+GROUP BY name
 
 '''
 18. Agregar una columna llamada "fecha" a la tabla "Pedidos" de tipo fecha.
 '''
+ALTER TABLE Pedidos
+ADD fecha DATE;
+
 '''
 19. Agregar una clave externa a la tabla "Pedidos" que haga referencia a la tabla
 "Productos" en la columna "producto".
@@ -111,7 +123,7 @@ pedidos de ese producto.
 los productos y las cantidades de los pedidos donde coincida la clave externa.
 '''
 
-''' ESQUEMA BASE DE DATOS PARA EJERCICIOS '''
+''' E S Q U E M A  B A S E  D E  D A T O S  P A R A  E J E R C I C I O S '''
 
 DROP TABLE IF EXISTS productos CASCADE;
 
@@ -119,6 +131,7 @@ DROP TABLE IF EXISTS ventas CASCADE;
 
 DROP TABLE IF EXISTS clientes CASCADE;
 
+DROP TABLE IF EXISTS pedidos CASCADE;
 
 CREATE TABLE clientes(  
     id INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -149,9 +162,24 @@ CREATE TABLE ventas(
 	CONSTRAINT foreing_key_product
 		FOREIGN KEY (product_id)
 		REFERENCES Productos(id)
-			
 );
-''' JUEGOS DE DATOS '''
+
+CREATE TABLE pedidos(  
+    id INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    date TIMESTAMP,
+    client_id INT,
+    product_id INT,
+    cantidad INT,
+	CONSTRAINT foreing_key_client
+		FOREIGN KEY (client_id)
+		REFERENCES Clientes(id),
+	CONSTRAINT foreing_key_product
+		FOREIGN KEY (product_id)
+		REFERENCES Productos(id)
+);
+
+
+''' J U E G O S  D E  D A T O S '''
 INSERT INTO clientes (name, surname, lastname, NIE, telephone, email)
 VALUES
     ('Juan', 'Pérez', 'García', 'X12345678', '123456789', 'juan@example.com'),
@@ -165,18 +193,6 @@ VALUES
     ('Miguel', 'Castillo', 'Pérez', 'R78901234', '7890123456', 'miguel@example.com'),
     ('Sofía', 'Ruiz', 'Gutiérrez', 'Q89012345', '8901234567', 'sofia@example.com');
 	
-INSERT INTO productos (name, type, price)
-VALUES
-    ('Sombrero', 'Accesorio', '24.99'),
-    ('Falda', 'Ropa', '34.99'),
-    ('Botas', 'Calzado', '79.99'),
-    ('Bolso', 'Accesorio', '29.99'),
-    ('Chaqueta', 'Ropa', '49.99'),
-    ('Camisa', 'Ropa', '29.99'),
-    ('Pantalón', 'Ropa', '39.99'),
-    ('Zapatos', 'Calzado', '59.99'),
-    ('Gorra', 'Accesorio', '14.99'),
-    ('Bufanda', 'Accesorio', '19.99');
 
 INSERT INTO ventas (date, client_id, product_id, quantity)
 VALUES
@@ -199,3 +215,28 @@ VALUES
     ('2023-07-20', 5, 1, '1'),
     ('2023-07-20', 5, 2, '2');
 
+INSERT INTO productos (name, type, price)
+VALUES
+    ('Sombrero', 'Accesorio', '24.99'),
+    ('Falda', 'Ropa', '34.99'),
+    ('Botas', 'Calzado', '79.99'),
+    ('Bolso', 'Accesorio', '29.99'),
+    ('Chaqueta', 'Ropa', '49.99'),
+    ('Camisa', 'Ropa', '29.99'),
+    ('Pantalón', 'Ropa', '39.99'),
+    ('Zapatos', 'Calzado', '59.99'),
+    ('Gorra', 'Accesorio', '14.99'),
+    ('Bufanda', 'Accesorio', '19.99');
+
+INSERT INTO pedidos (product_id, cantidad, client_id)
+VALUES
+    (1, 3, 1),
+    (2, 10, 2),
+    (3, 34, 3),
+    (4, 3, 4),
+    (5, 8, 5),
+    (6, 35, 6),
+    (7, 4, 4),
+    (7, 54, 3),
+    (2, 5, 1),
+    (1, 54, 2);

@@ -25,7 +25,7 @@ WHERE ID=1
 '''
 5. Crear una tabla llamada "Pedidos" con las columnas: id (entero, clave primaria),
 cliente_id (entero, clave externa referenciando a la tabla "Clientes"), producto
-(texto) y cantidad (entero).'''
+(texto) y cantidad (entero)..'''
 CREATE TABLE public.pedidos (
   	id serial Primary key,
 	producto VARCHAR(100),
